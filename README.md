@@ -10,7 +10,7 @@
 ## Install
 
 ```
-# Download the github repo:
+# Download the GitHub repo:
 git clone https://github.com/atomicals/atomicals-js.git
 
 cd atomicals-js
