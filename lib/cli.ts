@@ -183,35 +183,29 @@ function resolveWalletAliasNew(walletInfo: IValidatedWalletInfo, alias: string |
   throw 'No wallet alias or valid address found: ' + alias;
 }
 
-function resolveAddress(walletInfo: IValidatedWalletInfo, alias: string | undefined, defaultValue: any): IWalletRecord | any {
-
-  if (!alias) {
+function resolveAddress(
+  walletInfo: IValidatedWalletInfo,
+  aliasOrAddress: string | undefined,
+  defaultValue: any
+): IWalletRecord | { address: string } {
+  if (!aliasOrAddress) {
     return defaultValue;
   }
-
-  if (walletInfo[alias]) {
-
-    return walletInfo[alias];
+  if (walletInfo[aliasOrAddress]) {
+    return walletInfo[aliasOrAddress];
   }
-  if (walletInfo.imported[alias]) {
-
-    return walletInfo.imported[alias];
+  if (walletInfo.imported[aliasOrAddress]) {
+    return walletInfo.imported[aliasOrAddress];
   }
-
   // As a last effort try and return the address
   try {
-
-    detectAddressTypeToScripthash(alias)
-    return {
-      address: alias
-    }
+    detectAddressTypeToScripthash(aliasOrAddress)
+    return { address: aliasOrAddress }
   } catch (err) {
-    // Do nothing, but at least we tried
+    // Do nothing, but at least we tried.
   }
-
-  throw 'No wallet alias or valid address found: ' + alias;
+  throw 'No wallet alias or valid address found: ' + aliasOrAddress;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Start of Command Line Options Definitions
@@ -781,9 +775,9 @@ program.command('summary-subrealms')
       const walletInfo = await validateWalletStorage();
       const config: ConfigurationInterface = validateCliInputs();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      let ownerWalletRecord = resolveWalletAliasNew(walletInfo, options.owner, walletInfo.primary);
+      let ownerWalletAddress = resolveAddress(walletInfo, options.owner, walletInfo.primary).address;
       const filter = options.filter ? options.filter : undefined;
-      const result: any = await atomicals.summarySubrealms(ownerWalletRecord.address, filter);
+      const result: any = await atomicals.summarySubrealms(ownerWalletAddress, filter);
       handleResultLogging(result);
     } catch (error) {
       console.log(error);
@@ -799,9 +793,9 @@ program.command('summary-containers')
       const walletInfo = await validateWalletStorage();
       const config: ConfigurationInterface = validateCliInputs();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      let ownerWalletRecord = resolveWalletAliasNew(walletInfo, options.owner, walletInfo.primary);
+      let ownerWalletAddress = resolveAddress(walletInfo, options.owner, walletInfo.primary).address;
       const filter = options.filter ? options.filter : undefined;
-      const result: any = await atomicals.summaryContainers(ownerWalletRecord.address, filter);
+      const result: any = await atomicals.summaryContainers(ownerWalletAddress, filter);
       handleResultLogging(result);
     } catch (error) {
       console.log(error);
@@ -817,9 +811,9 @@ program.command('summary-realms')
       const walletInfo = await validateWalletStorage();
       const config: ConfigurationInterface = validateCliInputs();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      let ownerWalletRecord = resolveWalletAliasNew(walletInfo, options.owner, walletInfo.primary);
+      let ownerWalletAddress = resolveAddress(walletInfo, options.owner, walletInfo.primary).address;
       const filter = options.filter ? options.filter : undefined;
-      const result: any = await atomicals.summaryRealms(ownerWalletRecord.address, filter);
+      const result: any = await atomicals.summaryRealms(ownerWalletAddress, filter);
       handleResultLogging(result);
     } catch (error) {
       console.log(error);
@@ -835,9 +829,9 @@ program.command('summary-tickers')
       const walletInfo = await validateWalletStorage();
       const config: ConfigurationInterface = validateCliInputs();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      let ownerWalletRecord = resolveWalletAliasNew(walletInfo, options.owner, walletInfo.primary);
+      let ownerWalletAddress = resolveAddress(walletInfo, options.owner, walletInfo.primary).address;
       const filter = options.filter ? options.filter : undefined;
-      const result: any = await atomicals.summaryTickers(ownerWalletRecord.address, filter);
+      const result: any = await atomicals.summaryTickers(ownerWalletAddress, filter);
       handleResultLogging(result);
     } catch (error) {
       console.log(error);
@@ -1044,8 +1038,7 @@ program.command('mint-item')
     try {
       const walletInfo = await validateWalletStorage();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      let initialOwnerAddress = resolveAddress(walletInfo, options.initialowner, walletInfo.primary);
-      let ownerWalletRecord = resolveWalletAliasNew(walletInfo, options.owner, walletInfo.primary);
+      let initialOwnerAddress = resolveAddress(walletInfo, options.initialowner, walletInfo.primary).address;
       let fundingRecord = resolveWalletAliasNew(walletInfo, options.funding, walletInfo.funding);
       const result: any = await atomicals.mintContainerItemInteractive({
         rbf: options.rbf,
@@ -1058,7 +1051,7 @@ program.command('mint-item')
         bitworkc: options.bitworkc,
         bitworkr: options.bitworkr,
         disableMiningChalk: options.disablechalk,
-      }, containerName, itemName, manifestFile, initialOwnerAddress.address, fundingRecord.WIF, ownerWalletRecord);
+      }, containerName, itemName, manifestFile, initialOwnerAddress, fundingRecord.WIF);
       handleResultLogging(result, true);
     } catch (error) {
       console.log(error);
@@ -1448,11 +1441,11 @@ program.command('pending-subrealms')
       const walletInfo = await validateWalletStorage();
       const config: ConfigurationInterface = validateCliInputs();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      let ownerWalletRecord = resolveWalletAliasNew(walletInfo, options.owner, walletInfo.primary);
+      let ownerWalletAddress = resolveAddress(walletInfo, options.owner, walletInfo.primary).address;
       const display = options.display ? true : false;
       const satsbyte = parseInt(options.satsbyte);
       let fundingWalletRecord = resolveWalletAliasNew(walletInfo, options.funding, walletInfo.funding);
-      const result = await atomicals.pendingSubrealms(options, ownerWalletRecord.address, fundingWalletRecord, satsbyte, display);
+      const result = await atomicals.pendingSubrealms(options, ownerWalletAddress, fundingWalletRecord, satsbyte, display);
       if (options.verbose) {
         handleResultLogging(result);
       }
@@ -1533,7 +1526,6 @@ program.command('init-dft')
       const config: ConfigurationInterface = validateCliInputs();
       const requestTicker = ticker.toLowerCase();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      let walletRecord = resolveWalletAliasNew(walletInfo, options.funding, walletInfo.funding);
       let parentOwnerRecord = resolveWalletAliasNew(walletInfo, options.parentowner, walletInfo.primary);
       let fundingRecord = resolveWalletAliasNew(walletInfo, options.funding, walletInfo.funding);
       const result: any = await atomicals.initDftInteractive({
@@ -1549,7 +1541,7 @@ program.command('init-dft')
         parent: options.parent,
         parentOwner: parentOwnerRecord,
         disableMiningChalk: options.disablechalk,
-      }, file, walletRecord.address, requestTicker, mintAmount, maxMints, mintHeight, mintbitworkc, mintbitworkc, fundingRecord.WIF);
+      }, file, fundingRecord.address, requestTicker, mintAmount, maxMints, mintHeight, mintbitworkc, options.mintbitworkr, fundingRecord.WIF);
       handleResultLogging(result);
     } catch (error) {
       console.log(error);
@@ -1570,7 +1562,7 @@ program.command('mint-dft')
       const config: ConfigurationInterface = validateCliInputs();
       ticker = ticker.toLowerCase();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      let walletRecord = resolveWalletAliasNew(walletInfo, options.initialowner, walletInfo.primary);
+      let walletAddress = resolveAddress(walletInfo, options.initialowner, walletInfo.primary).address;
       let fundingRecord = resolveWalletAliasNew(walletInfo, options.funding, walletInfo.funding);
       const sats = parseInt(options.satsbyte);
 
@@ -1578,7 +1570,7 @@ program.command('mint-dft')
         rbf: options.rbf,
         satsbyte: parseInt(options.satsbyte),
         disableMiningChalk: options.disablechalk,
-      }, walletRecord.address, ticker, fundingRecord.WIF);
+      }, walletAddress, ticker, fundingRecord.WIF);
       handleResultLogging(result, true);
     } catch (error) {
       console.log(error);
@@ -1605,7 +1597,7 @@ program.command('mint-nft')
       const walletInfo = await validateWalletStorage();
       const config: ConfigurationInterface = validateCliInputs();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      let initialOwnerAddress = resolveAddress(walletInfo, options.initialowner, walletInfo.primary);
+      let initialOwnerAddress = resolveAddress(walletInfo, options.initialowner, walletInfo.primary).address;
       let parentOwnerRecord = resolveWalletAliasNew(walletInfo, options.parentowner, walletInfo.primary);
       let fundingRecord = resolveWalletAliasNew(walletInfo, options.funding, walletInfo.funding);
       const result: any = await atomicals.mintNftInteractive({
@@ -1621,7 +1613,7 @@ program.command('mint-nft')
         parent: options.parent,
         parentOwner: parentOwnerRecord,
         disableMiningChalk: options.disablechalk,
-      }, files, initialOwnerAddress.address, fundingRecord.WIF);
+      }, files, initialOwnerAddress, fundingRecord.WIF);
       handleResultLogging(result);
     } catch (error) {
       console.log(error);
@@ -1647,7 +1639,7 @@ program.command('mint-realm')
       const walletInfo = await validateWalletStorage();
       const config: ConfigurationInterface = validateCliInputs();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      let initialOwnerAddress = resolveAddress(walletInfo, options.initialowner, walletInfo.primary);
+      let initialOwnerAddress = resolveAddress(walletInfo, options.initialowner, walletInfo.primary).address;
       let parentOwnerRecord = resolveWalletAliasNew(walletInfo, options.parentowner, walletInfo.primary);
       let fundingRecord = resolveWalletAliasNew(walletInfo, options.funding, walletInfo.funding);
       const result: any = await atomicals.mintRealmInteractive({
@@ -1663,7 +1655,7 @@ program.command('mint-realm')
         parent: options.parent,
         parentOwner: parentOwnerRecord,
         disableMiningChalk: options.disablechalk,
-      }, realm, initialOwnerAddress.address, fundingRecord.WIF);
+      }, realm, initialOwnerAddress, fundingRecord.WIF);
       handleResultLogging(result, true);
     } catch (error) {
       console.log(error);
@@ -1688,7 +1680,7 @@ program.command('mint-subrealm')
       const walletInfo = await validateWalletStorage();
       const config: ConfigurationInterface = validateCliInputs();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      let initialOwnerAddress = resolveAddress(walletInfo, options.initialowner, walletInfo.primary);
+      let initialOwnerAddress = resolveAddress(walletInfo, options.initialowner, walletInfo.primary).address;
       let ownerWalletRecord = resolveWalletAliasNew(walletInfo, options.owner, walletInfo.primary);
       let fundingRecord = resolveWalletAliasNew(walletInfo, options.funding, walletInfo.funding);
       const result: any = await atomicals.mintSubrealmInteractive({
@@ -1702,7 +1694,7 @@ program.command('mint-subrealm')
         bitworkc: options.bitworkc,
         bitworkr: options.bitworkr,
         disableMiningChalk: options.disablechalk,
-      }, subrealm, initialOwnerAddress.address, fundingRecord.WIF, ownerWalletRecord);
+      }, subrealm, initialOwnerAddress, fundingRecord.WIF, ownerWalletRecord);
       handleResultLogging(result);
     } catch (error) {
       console.log(error);
@@ -1728,7 +1720,7 @@ program.command('mint-container')
       const walletInfo = await validateWalletStorage();
       const config: ConfigurationInterface = validateCliInputs();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      let initialOwnerAddress = resolveAddress(walletInfo, options.initialowner, walletInfo.primary);
+      let initialOwnerAddress = resolveAddress(walletInfo, options.initialowner, walletInfo.primary).address;
       let parentOwnerRecord = resolveWalletAliasNew(walletInfo, options.parentowner, walletInfo.primary);
       let fundingRecord = resolveWalletAliasNew(walletInfo, options.funding, walletInfo.funding);
       const result: any = await atomicals.mintContainerInteractive({
@@ -1744,7 +1736,7 @@ program.command('mint-container')
         parent: options.parent,
         parentOwner: parentOwnerRecord,
         disableMiningChalk: options.disablechalk
-      }, container, initialOwnerAddress.address, fundingRecord.WIF);
+      }, container, initialOwnerAddress, fundingRecord.WIF);
       handleResultLogging(result);
     } catch (error: any) {
       console.log(error);

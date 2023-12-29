@@ -350,7 +350,7 @@ export class Atomicals implements APIInterface {
     }
   }
 
-  async mintContainerItemInteractive(options: BaseRequestOptions, container: string, itemId: string, manifestFile: string, address: string, WIF: string, owner: IWalletRecord): Promise<CommandResultInterface> {
+  async mintContainerItemInteractive(options: BaseRequestOptions, container: string, itemId: string, manifestFile: string, address: string, WIF: string): Promise<CommandResultInterface> {
     try {
       await this.electrumApi.open();
       const command: CommandInterface = new MintInteractiveDitemCommand(this.electrumApi, options, container, itemId, manifestFile, address, WIF);
@@ -674,7 +674,7 @@ export class Atomicals implements APIInterface {
         atomicalIdReceiptType,
         forceSkipValidation,
       );
-      
+
       return await command.run();
     } catch (error: any) {
       return {
