@@ -151,21 +151,15 @@ export const getAtomicalIdentifierType = (providedIdentifier: any): AtomicalReso
 }
 
 export function isAtomicalId(atomicalId) {
-  if (!atomicalId || !atomicalId.length || atomicalId.indexOf('i') !== 64) {
+  if (typeof atomicalId !== 'string' || !atomicalId?.length || atomicalId?.indexOf('i') !== 64) {
     return false;
   }
   try {
-    const splitParts = atomicalId.split('i');
-    const txid = splitParts[0];
-    const index = parseInt(splitParts[1], 10);
-    return {
-      txid,
-      index,
-      atomicalId
-    }
+    const [txid, indexPart] = atomicalId.split('i');
+    return { txid, index: parseInt(indexPart, 10), atomicalId };
   } catch (err) {
+    return null;
   }
-  return null;
 }
 
 export function getTxIdFromAtomicalId(atomicalId: string): string {
