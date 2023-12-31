@@ -1,15 +1,21 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable prettier/prettier */
 import axios, { AxiosResponse } from 'axios';
+import { UTXO } from "../types/UTXO.interface";
+import { detectAddressTypeToScripthash } from "../utils/address-helpers";
 import { ElectrumApiInterface, IUnspentResponse } from "./electrum-api.interface";
-import { UTXO } from "../types/UTXO.interface"
-import { detectAddressTypeToScripthash } from "../utils/address-helpers"
 
 export class ElectrumApi implements ElectrumApiInterface {
     private isOpenFlag = false;
+    private endpoints: string[] = [];
 
     private constructor(private baseUrl: string, private usePost = true) {
+        this.initEndpoints(baseUrl);
         this.resetConnection();
+    }
+
+    private initEndpoints(baseUrl: string) {
+        this.endpoints = baseUrl.split(",");
     }
 
     public async resetConnection() {
@@ -41,18 +47,22 @@ export class ElectrumApi implements ElectrumApiInterface {
     }
 
     public async call(method, params) {
-        try {
-            let response: AxiosResponse<any, any>;
-            if (this.usePost) {
-                response = await axios.post(`${this.baseUrl}/${method}`, {params});
-            } else {
-                response = await axios.get(`${this.baseUrl}/${method}?params=${JSON.stringify(params)}`);
+        let err: any;
+        for (let baseUrl of this.endpoints) {
+            try {
+                let response: AxiosResponse<any, any>;
+                if (this.usePost) {
+                    response = await axios.post(`${baseUrl}/${method}`, {params});
+                } else {
+                    response = await axios.get(`${baseUrl}/${method}?params=${JSON.stringify(params)}`);
+                }
+                return response.data.response;
+            } catch (error) {
+                err = error;
+                console.log("use endpoint", baseUrl, "got err", err.message);
             }
-            return response.data.response;
-        } catch (error) {
-            console.log(error);
-            throw error;
         }
+        throw err;
     }
 
     public sendTransaction(signedRawTx: string): Promise<any> {
