@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable prettier/prettier */
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { UTXO } from "../types/UTXO.interface";
 import { detectAddressTypeToScripthash } from "../utils/address-helpers";
 import { ElectrumApiInterface, IUnspentResponse } from "./electrum-api.interface";
@@ -47,22 +47,23 @@ export class ElectrumApi implements ElectrumApiInterface {
     }
 
     public async call(method, params) {
-        let err: any;
-        for (let baseUrl of this.endpoints) {
+        for (const baseUrl of this.endpoints) {
             try {
-                let response: AxiosResponse<any, any>;
-                if (this.usePost) {
-                    response = await axios.post(`${baseUrl}/${method}`, {params});
-                } else {
-                    response = await axios.get(`${baseUrl}/${method}?params=${JSON.stringify(params)}`);
-                }
+                const url = `${baseUrl}/${method}`;
+                const options = {
+                    method: this.usePost ? 'post' : 'get',
+                    url: url,
+                    ...(this.usePost ? { data: { params } } : { params: params })
+                };
+    
+                const response = await axios(options);
                 return response.data.response;
             } catch (error) {
-                err = error;
-                console.log("use endpoint", baseUrl, "got err", err);
+                console.log(`Error using endpoint ${baseUrl}:`, error);
             }
         }
-        throw err;
+    
+        throw new Error('All endpoints failed');
     }
 
     public sendTransaction(signedRawTx: string): Promise<any> {
