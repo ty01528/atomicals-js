@@ -59,7 +59,7 @@ export class ElectrumApi implements ElectrumApiInterface {
                 return response.data.response;
             } catch (error) {
                 err = error;
-                console.log("use endpoint", baseUrl, "got err", err.message);
+                console.log("use endpoint", baseUrl, "got err", err);
             }
         }
         throw err;
