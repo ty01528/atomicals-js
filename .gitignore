@@ -12,6 +12,7 @@ payment_txs/
 download_txs/
 transfer_txs/
 wallets/
+wallets/*
 wallet.json
 wallet.json.*
 keypairs.json

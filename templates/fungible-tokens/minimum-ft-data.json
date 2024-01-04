@@ -1,7 +1,7 @@
 {
     "name": "",
     "desc": "",
-    "image": "atom:btc:dat:<location of store-file data>/image.png",
+    "image": "atom:btc:dat:<outpoint id of store-file data>/image.png",
     "legal": {
         "terms": ""
     }
