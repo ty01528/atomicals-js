@@ -105,7 +105,6 @@ if (parentPort) {
         const expectedFee =
             fees.commitFeeOnly +
             (workerOptions.satsbyte as any) * OUTPUT_BYTES_BASE;
-        // console.log('expectedFee', expectedFee);
         const differenceBetweenCalculatedAndExpected =
             calculatedFee - expectedFee;
         if (
@@ -241,7 +240,6 @@ function addCommitChangeOutputIfRequired(
     // In order to keep the fee-rate unchanged, we should add extra fee for the new added change output.
     const expectedFee =
         fee.commitFeeOnly + (satsbyte as any) * OUTPUT_BYTES_BASE;
-    // console.log('expectedFee', expectedFee);
     const differenceBetweenCalculatedAndExpected = calculatedFee - expectedFee;
     if (differenceBetweenCalculatedAndExpected <= 0) {
         return;
@@ -322,7 +320,7 @@ export const appendMintUpdateRevealScript = (
     payload: AtomicalsPayload,
     log: boolean = true
 ) => {
-    let ops = `${Buffer.from(keypair.childNodeXOnlyPubkey, "utf8").toString(
+    let ops = `${keypair.childNodeXOnlyPubkey.toString(
         "hex"
     )} OP_CHECKSIG OP_0 OP_IF `;
     ops += `${Buffer.from(ATOMICALS_PROTOCOL_ENVELOPE_ID, "utf8").toString(
