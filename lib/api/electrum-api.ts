@@ -1,15 +1,21 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable prettier/prettier */
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
+import { UTXO } from "../types/UTXO.interface";
+import { detectAddressTypeToScripthash } from "../utils/address-helpers";
 import { ElectrumApiInterface, IUnspentResponse } from "./electrum-api.interface";
-import { UTXO } from "../types/UTXO.interface"
-import { detectAddressTypeToScripthash } from "../utils/address-helpers"
 
 export class ElectrumApi implements ElectrumApiInterface {
     private isOpenFlag = false;
+    private endpoints: string[] = [];
 
     private constructor(private baseUrl: string, private usePost = true) {
+        this.initEndpoints(baseUrl);
         this.resetConnection();
+    }
+
+    private initEndpoints(baseUrl: string) {
+        this.endpoints = baseUrl.split(",");
     }
 
     public async resetConnection() {
@@ -41,18 +47,23 @@ export class ElectrumApi implements ElectrumApiInterface {
     }
 
     public async call(method, params) {
-        try {
-            let response: AxiosResponse<any, any>;
-            if (this.usePost) {
-                response = await axios.post(`${this.baseUrl}/${method}`, {params});
-            } else {
-                response = await axios.get(`${this.baseUrl}/${method}?params=${JSON.stringify(params)}`);
+        for (const baseUrl of this.endpoints) {
+            try {
+                const url = `${baseUrl}/${method}`;
+                const options = {
+                    method: this.usePost ? 'post' : 'get',
+                    url: url,
+                    ...(this.usePost ? { data: { params } } : { params: params })
+                };
+    
+                const response = await axios(options);
+                return response.data.response;
+            } catch (error) {
+                console.log(`Error using endpoint ${baseUrl}:`, error);
             }
-            return response.data.response;
-        } catch (error) {
-            console.log(error);
-            throw error;
         }
+    
+        throw new Error('All endpoints failed');
     }
 
     public sendTransaction(signedRawTx: string): Promise<any> {

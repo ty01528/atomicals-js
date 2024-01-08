@@ -56,6 +56,7 @@ function printFailure(data: any) {
 function handleResultLogging(result: any, showDonation?: boolean) {
   if (!result || !result.success || !result.data) {
     printFailure(result);
+    process.exit(1);
   } else {
     printSuccess(result.data, showDonation);
   }
