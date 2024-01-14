@@ -113,8 +113,8 @@ export class InitInteractiveDftCommand implements CommandInterface {
       console.log('WARNING: Mint Bitworkc might be too hard to mine and could take a very long time. Confirm if that is acceptable.', this.mintBitworkc);
     }
 
-    if (supply < 21000000) {
-      console.log('WARNING: Total supply is less than 21,000,000. Confirm if that is acceptable.', supply);
+    if (supply < 2100000000) {
+      console.log('WARNING: Total supply is less than 2,100,000,000. Confirm if that is acceptable.', supply);
     }
 
     await promptContinue();

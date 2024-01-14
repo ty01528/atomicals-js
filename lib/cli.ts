@@ -332,7 +332,7 @@ program.command('script-address')
     console.log('Address:', result)
     console.log(`------------------------------------------------------`);
   });
-
+ 
 program.command('outpoint-compact')
   .description('Decodes hex outpoint to compact location id form')
   .argument('<hex>', 'string')
@@ -902,6 +902,16 @@ program.command('find-containers')
     }
   });
 
+/*
+program.command('diff')
+  .action(async (options) => {
+    const a = [
+    ]
+    const b = []
+    let diffs = b.filter(x => !a.includes(x));
+    console.log(JSON.stringify(diffs, null, 2))
+  });*/
+  
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Modify, Updates, Events, Delete...
 /////////////////////////////////////////////////////////////////////////////////////////////
