@@ -41,12 +41,12 @@ import {
 import * as ecc from "tiny-secp256k1";
 import { ECPairFactory, ECPairAPI, TinySecp256k1Interface } from "ecpair";
 
-const tinysecp: TinySecp256k1Interface = require("tiny-secp256k1");
+const tinysecp: TinySecp256k1Interface = ecc;
 const bitcoin = require("bitcoinjs-lib");
 import * as chalk from "chalk";
 
 bitcoin.initEccLib(ecc);
-import { initEccLib, networks, Psbt, Transaction } from "bitcoinjs-lib";
+import { initEccLib, Psbt } from "bitcoinjs-lib";
 
 initEccLib(tinysecp as any);
 import {
