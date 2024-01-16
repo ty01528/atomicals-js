@@ -654,7 +654,7 @@ export class AtomicalOperationBuilder {
         const fees: FeeCalculations =
             this.calculateFeesRequiredForAccumulatedCommitAndReveal(
                 mockBaseCommitForFeeCalculation.hashLockP2TR.redeem.output
-                    .length
+                    .length, performBitworkForRevealTx
             );
 
         ////////////////////////////////////////////////////////////////////////
@@ -1127,15 +1127,20 @@ export class AtomicalOperationBuilder {
     }
 
     calculateAmountRequiredForReveal(
-        hashLockP2TROutputLen: number = 0
+        hashLockP2TROutputLen: number = 0,
+        performBitworkForRevealTx: boolean
     ): number {
         // <Previous txid> <Output index> <Length of scriptSig> <Sequence number>
         // 32 + 4 + 1 + 4 = 41
         // <Witness stack item length> <Signature> ... <Control block>
         // (1 + 65 + 34) / 4 = 25
         // Total: 41 + 25 = 66
-        const REVEAL_INPUT_BYTES_BASE = 96;
+        const REVEAL_INPUT_BYTES_BASE = 66;
         let hashLockCompactSizeBytes = 9;
+        let BORNSizeBytes = 0;
+        if(performBitworkForRevealTx){
+            BORNSizeBytes = 30;
+        }
         if (hashLockP2TROutputLen <= 252) {
             hashLockCompactSizeBytes = 1;
         } else if (hashLockP2TROutputLen <= 0xffff) {
@@ -1153,7 +1158,10 @@ export class AtomicalOperationBuilder {
                     // Additional inputs
                     this.inputUtxos.length * INPUT_BYTES_BASE +
                     // Outputs
-                    this.additionalOutputs.length * OUTPUT_BYTES_BASE)
+                    this.additionalOutputs.length * OUTPUT_BYTES_BASE + 
+                    // Bitwork Output Random Number Size Bytes
+                    BORNSizeBytes)
+                )
         );
     }
 
@@ -1179,10 +1187,12 @@ export class AtomicalOperationBuilder {
      * @returns
      */
     calculateFeesRequiredForAccumulatedCommitAndReveal(
-        hashLockP2TROutputLen: number = 0
+        hashLockP2TROutputLen: number = 0,
+        performBitworkForRevealTx: boolean
     ): FeeCalculations {
         const revealFee = this.calculateAmountRequiredForReveal(
-            hashLockP2TROutputLen
+            hashLockP2TROutputLen,
+            performBitworkForRevealTx
         );
         const commitFee = this.calculateFeesRequiredForCommit();
         const commitAndRevealFee = commitFee + revealFee;
