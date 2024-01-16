@@ -94,4 +94,5 @@ export interface APIInterface {
     download(locationIdOrTxId: string, name: string): Promise<CommandResultInterface>;
     walletInfo(address: string, verbose: boolean, keepElectrumAlive: boolean): Promise<CommandResultInterface>;
     serverVersion(): Promise<CommandResultInterface>;
+    awaitUtxo(address: string, amount: number): Promise<CommandResultInterface>;
 }
