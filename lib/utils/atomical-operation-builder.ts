@@ -1134,7 +1134,7 @@ export class AtomicalOperationBuilder {
         // <Witness stack item length> <Signature> ... <Control block>
         // (1 + 65 + 34) / 4 = 25
         // Total: 41 + 25 = 66
-        const REVEAL_INPUT_BYTES_BASE = 66;
+        const REVEAL_INPUT_BYTES_BASE = 96;
         let hashLockCompactSizeBytes = 9;
         if (hashLockP2TROutputLen <= 252) {
             hashLockCompactSizeBytes = 1;
