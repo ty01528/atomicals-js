@@ -902,6 +902,23 @@ program.command('find-containers')
     }
   });
 
+program.command('await-utxo')
+.description('Finds utxo by address')
+.argument('<address>', 'string')
+.argument('<amount>', 'number')
+.action(async (address, amount, options) => {
+  try {
+    await validateWalletStorage();
+    const config: ConfigurationInterface = validateCliInputs();
+    const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
+    const result = await atomicals.awaitUtxo(address, parseInt(amount, 10));
+    handleResultLogging(result);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+
 /*
 program.command('diff')
   .action(async (options) => {
