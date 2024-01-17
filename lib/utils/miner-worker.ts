@@ -76,7 +76,6 @@ if (parentPort) {
         const fundingKeypairRaw = ECPair.fromWIF(fundingWIF);
         const fundingKeypair = getKeypairInfo(fundingKeypairRaw);
 
-        copiedData["args"]["nonce"] = Math.floor(Math.random() * 10000000);
         copiedData["args"]["time"] = Math.floor(Date.now() / 1000);
 
         let atomPayload = new AtomicalsPayload(copiedData);

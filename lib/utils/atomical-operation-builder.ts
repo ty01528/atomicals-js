@@ -629,7 +629,8 @@ export class AtomicalOperationBuilder {
 
         // Placeholder for only estimating tx deposit fee size.
         if (performBitworkForCommitTx) {
-            copiedData["args"]["nonce"] = 9999999;
+            // Use zero nonce in order for recoverable real addresses.
+            copiedData["args"]["nonce"] = 0;
             copiedData["args"]["time"] = unixtime;
         }
 
