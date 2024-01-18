@@ -1128,7 +1128,7 @@ export class AtomicalOperationBuilder {
 
     calculateAmountRequiredForReveal(
         hashLockP2TROutputLen: number = 0,
-        performBitworkForRevealTx: boolean
+        performBitworkForRevealTx: boolean = false
     ): number {
         // <Previous txid> <Output index> <Length of scriptSig> <Sequence number>
         // 32 + 4 + 1 + 4 = 41
@@ -1136,10 +1136,12 @@ export class AtomicalOperationBuilder {
         // (1 + 65 + 34) / 4 = 25
         // Total: 41 + 25 = 66
         const REVEAL_INPUT_BYTES_BASE = 66;
+        // OP_RETURN size
+        const REVEAL_OP_RETURN: number = 30;
         let hashLockCompactSizeBytes = 9;
-        let BORNSizeBytes = 0;
+        let op_Return_SizeBytes = 0;
         if(performBitworkForRevealTx){
-            BORNSizeBytes = 30;
+            op_Return_SizeBytes = REVEAL_OP_RETURN;
         }
         if (hashLockP2TROutputLen <= 252) {
             hashLockCompactSizeBytes = 1;
@@ -1159,8 +1161,8 @@ export class AtomicalOperationBuilder {
                     this.inputUtxos.length * INPUT_BYTES_BASE +
                     // Outputs
                     this.additionalOutputs.length * OUTPUT_BYTES_BASE + 
-                    // Bitwork Output Random Number Size Bytes
-                    BORNSizeBytes)
+                    // Bitwork Output OP_RETURN Size Bytes
+                    op_Return_SizeBytes)
                 )
         );
     }
@@ -1188,7 +1190,7 @@ export class AtomicalOperationBuilder {
      */
     calculateFeesRequiredForAccumulatedCommitAndReveal(
         hashLockP2TROutputLen: number = 0,
-        performBitworkForRevealTx: boolean
+        performBitworkForRevealTx: boolean = false
     ): FeeCalculations {
         const revealFee = this.calculateAmountRequiredForReveal(
             hashLockP2TROutputLen,
