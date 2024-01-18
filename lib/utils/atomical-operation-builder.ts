@@ -1160,10 +1160,6 @@ export class AtomicalOperationBuilder {
         } else if (hashLockP2TROutputLen <= 0xffffffff) {
             hashLockCompactSizeBytes = 5;
         }
-        let opReturnSize = 0;
-        if (opReturn) {
-            opReturnSize = OP_RETURN_BYTES;
-        }
         return Math.ceil(
             (this.options.satsbyte as any) *
                 (BASE_BYTES +
@@ -1177,7 +1173,6 @@ export class AtomicalOperationBuilder {
                     // Bitwork Output OP_RETURN Size Bytes
                     op_Return_SizeBytes)
                 )
-        );
     }
 
     calculateFeesRequiredForCommit(): number {
