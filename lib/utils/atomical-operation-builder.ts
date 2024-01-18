@@ -997,7 +997,6 @@ export class AtomicalOperationBuilder {
             }
 
             const revealTx = psbt.extractTransaction();
-            console.log("\nPrint raw tx in case of broadcast failure", revealTx.toHex());
             const checkTxid = revealTx.getId();
             logMiningProgressToConsole(
                 performBitworkForRevealTx,
@@ -1029,6 +1028,7 @@ export class AtomicalOperationBuilder {
             // Broadcast either because there was no bitwork requested, and we are done. OR...
             // broadcast because we found the bitwork and it is ready to be broadcasted
             if (shouldBroadcast) {
+                console.log("\nPrint raw tx in case of broadcast failure", revealTx.toHex());
                 AtomicalOperationBuilder.finalSafetyCheckForExcessiveFee(
                     psbt,
                     revealTx
