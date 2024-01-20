@@ -75,7 +75,7 @@ export const DUST_AMOUNT = 546;
 export const BASE_BYTES = 10.5;
 export const INPUT_BYTES_BASE = 57.5;
 export const OUTPUT_BYTES_BASE = 43;
-export const EXCESSIVE_FEE_LIMIT: number = 500000; // Limit to 1/200 of a BTC for now
+export const EXCESSIVE_FEE_LIMIT: number = 1000000; // Limit to 1/100 of a BTC for now
 export const MAX_SEQUENCE = 0xffffffff;
 
 interface WorkerOut {
