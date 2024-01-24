@@ -77,6 +77,8 @@ import { CreateDmintCommand } from "./commands/create-dmint-command";
 import { TransferInteractiveBuilderCommand } from "./commands/transfer-interactive-builder-command";
 import { DecodeTxCommand } from "./commands/decode-tx-command";
 import { AwaitUtxoCommand } from "./commands/await-utxo-command";
+import { InitInteractiveInfiniteDftCommand } from "./commands/init-interactive-infinite-dft-command";
+import { InitInteractiveFixedDftCommand } from "./commands/init-interactive-fixed-dft-command";
 export { decorateAtomicals } from "./utils/atomical-format-helpers";
 export { addressToP2PKH } from "./utils/address-helpers";
 export { getExtendTaprootAddressKeypairPath } from "./utils/address-keypair-path";
@@ -400,10 +402,10 @@ export class Atomicals implements APIInterface {
     }
   }
 
-  async mintDftInteractive(options: BaseRequestOptions, address: string, ticker: string, WIF: string): Promise<CommandResultInterface> {
+  async mintDftInteractive(options: BaseRequestOptions, address: string, ticker: string, WIF: string, useCurrentBitwork?: boolean): Promise<CommandResultInterface> {
     try {
       await this.electrumApi.open();
-      const command: CommandInterface = new MintInteractiveDftCommand(this.electrumApi, options, address, ticker, WIF);
+      const command: CommandInterface = new MintInteractiveDftCommand(this.electrumApi, options, address, ticker, WIF, useCurrentBitwork);
       return await command.run();
     } catch (error: any) {
       return {
@@ -436,6 +438,92 @@ export class Atomicals implements APIInterface {
     try {
       await this.electrumApi.open();
       const command: CommandInterface = new InitInteractiveDftCommand(this.electrumApi, options, file, address, requestTicker, mintAmount, maxMints, mintHeight, mintBitworkc, mintBitworkr, WIF);
+      return await command.run();
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error.toString(),
+        error
+      }
+    } finally {
+      this.electrumApi.close();
+    }
+  }
+
+  async initInfiniteDftInteractive(
+    options: BaseRequestOptions,
+    file: string,
+    address: string,
+    requestTicker: string,
+    mintAmount: number,
+    maxMints: number,
+    mintHeight: number, 
+    mintBitworkVector: string, 
+    mintBitworkCommitIncrement: number, 
+    mintBitworkRevealIncrement: number | null, 
+    mintBitworkCommitIncrementStart: number | null,
+    mintBitworkRevealIncrementStart: number | null, 
+    WIF: string,
+    noImage?: boolean,
+  ): Promise<CommandResultInterface> {
+    try {
+      await this.electrumApi.open();
+      const command: CommandInterface = new InitInteractiveInfiniteDftCommand(
+        this.electrumApi, 
+        options, 
+        file,
+        address,
+        requestTicker,
+        mintAmount, 
+        maxMints, 
+        mintHeight, 
+        mintBitworkVector, 
+        mintBitworkCommitIncrement,
+        mintBitworkRevealIncrement, 
+        mintBitworkCommitIncrementStart,
+        mintBitworkRevealIncrementStart,
+        WIF,
+        noImage);
+      return await command.run();
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error.toString(),
+        error
+      }
+    } finally {
+      this.electrumApi.close();
+    }
+  }
+
+  async initFixedDftInteractive(
+    options: BaseRequestOptions,
+    file: string,
+    address: string,
+    requestTicker: string,
+    mintAmount: number,
+    maxMints: number,
+    mintHeight: number, 
+    mintBitworkCommit: string, 
+    mintBitworkReveal: string | null, 
+    WIF: string,
+    noImage?: boolean,
+  ): Promise<CommandResultInterface> {
+    try {
+      await this.electrumApi.open();
+      const command: CommandInterface = new InitInteractiveFixedDftCommand(
+        this.electrumApi, 
+        options, 
+        file,
+        address,
+        requestTicker,
+        mintAmount, 
+        maxMints, 
+        mintHeight, 
+        mintBitworkCommit, 
+        mintBitworkReveal, 
+        WIF,
+        noImage);
       return await command.run();
     } catch (error: any) {
       return {
