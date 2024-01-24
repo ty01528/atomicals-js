@@ -128,8 +128,6 @@ if (parentPort) {
 
         // Start mining loop, terminates when a valid proof of work is found or stopped manually
         do {
-            // Introduce a minor delay to avoid overloading the CPU
-            await sleep(0);
 
             // This worker has tried all assigned sequence range but it did not find solution.
             if (sequence > seqEnd) {
@@ -211,6 +209,7 @@ if (parentPort) {
                 );
                 lastTime = Date.now();
                 lastGenerated = generated;
+                await sleep(0);
             }
         } while (workerPerformBitworkForCommitTx);
 
