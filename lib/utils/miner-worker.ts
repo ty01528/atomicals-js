@@ -122,6 +122,10 @@ if (parentPort) {
         };
         let finalCopyData, finalPrelimTx, finalSequence;
 
+        let lastGenerated = 0;
+        let generated = 0;
+        let lastTime = Date.now();
+
         // Start mining loop, terminates when a valid proof of work is found or stopped manually
         do {
             // Introduce a minor delay to avoid overloading the CPU
@@ -196,6 +200,18 @@ if (parentPort) {
             }
 
             sequence++;
+            generated++;
+
+            if (generated % 10000 === 0) {
+                const hashRate = ((generated - lastGenerated) / (Date.now() - lastTime)) * 1000;
+                console.log(
+                    'Hash rate:',
+                    hashRate.toFixed(2),
+                    'Op/s ',
+                );
+                lastTime = Date.now();
+                lastGenerated = generated;
+            }
         } while (workerPerformBitworkForCommitTx);
 
         if (finalSequence && finalSequence != -1) {
