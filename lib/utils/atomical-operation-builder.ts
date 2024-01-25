@@ -620,6 +620,20 @@ export class AtomicalOperationBuilder {
             }; // Also supports one parent for now
         }
 
+        if (this.options.satsbyte == -1) {
+            const response: { result } = await this.options.electrumApi.estimateFee(1);
+            let estimatedSatsByte = Math.ceil((response.result / 1000) * 100000000);
+            if (isNaN(estimatedSatsByte)) {
+                estimatedSatsByte = 200; // Something went wrong, just default to 30 bytes sat estimate
+                console.log('satsbyte fee query failed, defaulted to: ', estimatedSatsByte)
+            } else {
+                this.options.satsbyte = estimatedSatsByte + 5; // Add a buffer of 5 sats just in case
+                console.log('satsbyte fee auto-detected to: ', estimatedSatsByte)
+            }
+        } else {
+            console.log('satsbyte fee manually set to: ', this.options.satsbyte)
+        }
+
         let unixtime = Math.floor(Date.now() / 1000);
         let nonce = Math.floor(Math.random() * 10000000);
         let noncesGenerated = 0;
