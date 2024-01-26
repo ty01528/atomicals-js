@@ -11,8 +11,8 @@ import {
 import { GetByTickerCommand } from "./get-by-ticker-command";
 import { BaseRequestOptions } from "../interfaces/api.interface";
 import { AtomicalOperationBuilder } from "../utils/atomical-operation-builder";
-import { BitworkInfo, checkBaseRequestOptions, isValidBitworkMinimum, isValidBitworkString } from "../utils/atomical-format-helpers";
-import { prepareFilesDataAsObject, readJsonFileAsCompleteDataObjectEncodeAtomicalIds } from "./command-helpers";
+import { checkBaseRequestOptions, isValidBitworkMinimum } from "../utils/atomical-format-helpers";
+import { readJsonFileAsCompleteDataObjectEncodeAtomicalIds } from "./command-helpers";
 import { isHex } from "../utils/utils";
 const tinysecp: TinySecp256k1Interface = require('tiny-secp256k1');
 initEccLib(tinysecp as any);
@@ -172,6 +172,7 @@ export class InitInteractiveInfiniteDftCommand implements CommandInterface {
       mint_height: Number(this.mintHeight),
       max_mints: Number(this.maxMints),
     };
+    
     // Set mint mode = perpetual/infinite
     args['md'] = 1
     args['bv'] = this.mintBitworkVector

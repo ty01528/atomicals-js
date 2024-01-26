@@ -12,8 +12,7 @@ import { GetByTickerCommand } from "./get-by-ticker-command";
 import { BaseRequestOptions } from "../interfaces/api.interface";
 import { AtomicalOperationBuilder } from "../utils/atomical-operation-builder";
 import { BitworkInfo, checkBaseRequestOptions, isValidBitworkMinimum, isValidBitworkString } from "../utils/atomical-format-helpers";
-import { prepareFilesDataAsObject, readJsonFileAsCompleteDataObjectEncodeAtomicalIds } from "./command-helpers";
-import { isHex } from "../utils/utils";
+import { readJsonFileAsCompleteDataObjectEncodeAtomicalIds } from "./command-helpers";
 const tinysecp: TinySecp256k1Interface = require('tiny-secp256k1');
 initEccLib(tinysecp as any);
 

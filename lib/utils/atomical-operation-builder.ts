@@ -627,7 +627,7 @@ export class AtomicalOperationBuilder {
                 estimatedSatsByte = 200; // Something went wrong, just default to 30 bytes sat estimate
                 console.log('satsbyte fee query failed, defaulted to: ', estimatedSatsByte)
             } else {
-                this.options.satsbyte = estimatedSatsByte + 5; // Add a buffer of 5 sats just in case
+                this.options.satsbyte = estimatedSatsByte; 
                 console.log('satsbyte fee auto-detected to: ', estimatedSatsByte)
             }
         } else {
