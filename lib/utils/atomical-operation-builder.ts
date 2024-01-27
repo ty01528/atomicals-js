@@ -1328,7 +1328,13 @@ export class AtomicalOperationBuilder {
                 let reply: string = '';
                 const prompt = (query) => new Promise((resolve) => rl.question(query, resolve));
                 console.log(`Excessive fee ${fee} satoshis detected. Hardcoded to ${EXCESSIVE_FEE_LIMIT} satoshis. Aborting due to protect funds.`)
-                reply = (await prompt("To ignore and continue type 'y' or 'n' to cancel: ") as any);
+                const allowedInput = ['y', 'yes', 'n', 'no'];
+                while (!allowedInput.includes(reply)) {
+                    reply = (await prompt("To ignore and continue type 'y', or 'n' to cancel: ") as any);
+                    if (!allowedInput.includes(reply)) {
+                        console.log("Invalid input.");
+                    }
+                }
                 if (reply === 'y' || reply === 'yes') {
                     return;
                 }
