@@ -727,11 +727,12 @@ program.command('validate-container-item')
   .argument('<containerName>', 'string')
   .argument('<itemName>', 'string')
   .argument('<manifestFile>', 'string')
+  .option('--sealed --no-sealed', 'Validate the item without checking if the container is sealed.')
   .action(async (containerName, itemName, manifestFile, options) => {
     try {
       const walletInfo = await validateWalletStorage();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
-      const result: any = await atomicals.getAtomicalByContainerItemValidated(containerName, itemName, manifestFile);
+      const result: any = await atomicals.getAtomicalByContainerItemValidated(containerName, itemName, manifestFile, options.sealed);
       handleResultLogging(result);
     } catch (error) {
       console.log(error);

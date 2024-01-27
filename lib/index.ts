@@ -1157,10 +1157,10 @@ export class Atomicals implements APIInterface {
       }
     }
   }
-  async getAtomicalByContainerItemValidated(container: string, itemId: string, manifestFile: string): Promise<CommandResultInterface> {
+  async getAtomicalByContainerItemValidated(container: string, itemId: string, manifestFile: string, checkWithoutSealed: boolean): Promise<CommandResultInterface> {
     try {
       await this.electrumApi.open();
-      const command: CommandInterface = new GetContainerItemValidatedByManifestCommand(this.electrumApi, container, itemId, manifestFile);
+      const command: CommandInterface = new GetContainerItemValidatedByManifestCommand(this.electrumApi, container, itemId, manifestFile, checkWithoutSealed);
       return await command.run();
     } catch (error: any) {
       return {

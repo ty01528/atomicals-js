@@ -84,7 +84,7 @@ export interface APIInterface {
     getAtomicalByRealm(realm: string, keepElectrumAlive: boolean): Promise<CommandResultInterface>;
     getAtomicalByTicker(ticker: string, keepElectrumAlive: boolean): Promise<CommandResultInterface>;
     getAtomicalByContainerItem(container: string, itemId: string, keepElectrumAlive: boolean): Promise<CommandResultInterface>;
-    getAtomicalByContainerItemValidated(container: string, itemId: string,  manifestFile: string, address: string, keepElectrumAlive: boolean): Promise<CommandResultInterface>;
+    getAtomicalByContainerItemValidated(container: string, itemId: string,  manifestFile: string, checkWithoutSealed: boolean, address: string, keepElectrumAlive: boolean): Promise<CommandResultInterface>;
 
     resolveAtomical(atomicalIdOrNumberOrVariousName: string, atomicalsGetFetchType: AtomicalsGetFetchType, verbose: boolean, keepElectrumAlive: boolean): Promise<CommandResultInterface>;
     getRealmInfo(atomicalIdOrNumberOrVariousName: string, verbose: boolean, keepElectrumAlive: boolean): Promise<GetSubrealmInfoCommandResultInterface>;
