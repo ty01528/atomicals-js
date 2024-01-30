@@ -209,7 +209,7 @@ if (parentPort) {
                 );
                 lastTime = Date.now();
                 lastGenerated = generated;
-                await sleep(0);
+                await immediate();
             }
         } while (workerPerformBitworkForCommitTx);
 
@@ -351,4 +351,8 @@ export const appendMintUpdateRevealScript = (
 
 function sleep(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function immediate() {
+    return new Promise(resolve => setImmediate(resolve));
 }
