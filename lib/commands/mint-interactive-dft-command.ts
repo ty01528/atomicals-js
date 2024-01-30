@@ -77,7 +77,7 @@ export class MintInteractiveDftCommand implements CommandInterface {
     const mint_bitworkr_current_remaining = atomicalDecorated['dft_info']['mint_bitworkr_current_remaining'];
 
     const ticker = atomicalDecorated['$ticker'];
-    const isInfiniteMode = atomicalDecorated['$mint_mode'] == 'infinite';
+    const isInfiniteMode = atomicalDecorated['$mint_mode'] == 'perpetual';
 
     if (isInfiniteMode) {
       console.log('Infinite minting mode detected, there is no limit')
