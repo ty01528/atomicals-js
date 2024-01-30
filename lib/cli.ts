@@ -1545,6 +1545,7 @@ program.command('init-dft-perpetual')
   .option('--mintbitworkrincstart <number>', 'The starting amount of bitworkr to increase for each phase of max_mints')
   .option('--max_mints <number>', 'The number of mints allowed per mint phase of max_mints', '2000')
   .option('--mint_height <number>', 'The starting mint height', '0')
+  .option('--maxglobalmints <number>', 'The global max mints')
   .option('--metadata <string>', 'File to include for metadata')
   .option('--mint_amount <number>', 'The number of tokens per mint', '10000')
   .option('--funding <string>', 'Use wallet alias wif key to be used for funding and change')
@@ -1565,6 +1566,7 @@ program.command('init-dft-perpetual')
       const mintHeight = options.mint_height && parseInt(options.mint_height, 10) ? parseInt(options.mint_height, 10) : 0;
       const mintAmount = options.mint_amount && parseInt(options.mint_amount, 10) ? parseInt(options.mint_amount, 10) : 10000;
       const maxMints = options.max_mints && parseInt(options.max_mints, 10) ? parseInt(options.max_mints, 10) : 10000;
+      // const maxGlobalMints = options.max_global_mints && parseInt(options.max_global_mints, 10) ? parseInt(options.max_global_mints, 10) : -1;
       const file = options.metadata;
       const result: any = await atomicals.initInfiniteDftInteractive({
         rbf: options.rbf,
@@ -1588,6 +1590,7 @@ program.command('init-dft-perpetual')
         mintbitworkrinc,
         options.mintbitworkcincstart ? parseInt(options.mintbitworkcincstart) : null,
         options.mintbitworkrincstart ? parseInt(options.mintbitworkrincstart) : null,
+        options.maxglobalmints ? parseInt(options.maxglobalmints) : null,
         fundingRecord.WIF,
         options.noimage
       );

@@ -463,6 +463,7 @@ export class Atomicals implements APIInterface {
     mintBitworkRevealIncrement: number | null, 
     mintBitworkCommitIncrementStart: number | null,
     mintBitworkRevealIncrementStart: number | null, 
+    maxGlobalMints: number | null,
     WIF: string,
     noImage?: boolean,
   ): Promise<CommandResultInterface> {
@@ -482,6 +483,7 @@ export class Atomicals implements APIInterface {
         mintBitworkRevealIncrement, 
         mintBitworkCommitIncrementStart,
         mintBitworkRevealIncrementStart,
+	maxGlobalMints,
         WIF,
         noImage);
       return await command.run();
