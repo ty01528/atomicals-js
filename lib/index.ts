@@ -402,10 +402,10 @@ export class Atomicals implements APIInterface {
     }
   }
 
-  async mintDftInteractive(options: BaseRequestOptions, address: string, ticker: string, WIF: string, useCurrentBitwork?: boolean): Promise<CommandResultInterface> {
+  async mintDftInteractive(options: BaseRequestOptions, address: string, ticker: string, WIF: string, mineCurrentBitwork?: boolean): Promise<CommandResultInterface> {
     try {
       await this.electrumApi.open();
-      const command: CommandInterface = new MintInteractiveDftCommand(this.electrumApi, options, address, ticker, WIF, useCurrentBitwork);
+      const command: CommandInterface = new MintInteractiveDftCommand(this.electrumApi, options, address, ticker, WIF, mineCurrentBitwork);
       return await command.run();
     } catch (error: any) {
       return {
