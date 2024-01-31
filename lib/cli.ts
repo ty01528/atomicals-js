@@ -1692,7 +1692,7 @@ program.command('mint-dft')
   .option('--rbf', 'Whether to enable RBF for transactions.')
   .option('--initialowner <string>', 'Assign claimed tokens into this address')
   .option('--funding <string>', 'Use wallet alias wif key to be used for funding and change')
-  .option('--current <string>', 'Mine the current bitwork. If disabled mines the next.')
+  .option('--current', 'Mine the current bitwork. If disabled mines the next.')
   .option('--satsbyte <number>', 'Satoshis per byte in fees', '-1')
   .option('--disablechalk', 'Whether to disable the real-time chalked logging of each hash for Bitwork mining. Improvements mining performance to set this flag')
   .action(async (ticker, options) => {
