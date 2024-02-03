@@ -1266,10 +1266,11 @@ program.command('get')
   .action(async (atomicalAliasOrId, options) => {
     try {
       await validateWalletStorage();
+      const atomicalAliasOrIdLC = atomicalAliasOrId.toLowerCase()
       const config: ConfigurationInterface = validateCliInputs();
       const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
       const verbose = options.verbose ? true : false;
-      const result = await atomicals.resolveAtomical(atomicalAliasOrId, AtomicalsGetFetchType.GET, undefined, verbose);
+      const result = await atomicals.resolveAtomical(atomicalAliasOrIdLC, AtomicalsGetFetchType.GET, undefined, verbose);
       handleResultLogging(result, true);
     } catch (error) {
       console.log(error);
