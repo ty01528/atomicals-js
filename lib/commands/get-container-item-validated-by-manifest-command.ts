@@ -25,7 +25,6 @@ export class GetContainerItemValidatedByManifestCommand implements CommandInterf
     private manifestJsonFile: string,
     private checkWithoutSealed: boolean,
   ) {
-
     this.container = this.container.startsWith('#') ? this.container.substring(1) : this.container;
   }
   async run(): Promise<any> {
@@ -39,6 +38,10 @@ export class GetContainerItemValidatedByManifestCommand implements CommandInterf
       }
     }
     const parentContainerId = getResponse.data.result.atomical_id;
+    const errors: string[] = getResponse.data.result.$container_dmint_status?.errors;
+    if (errors !== undefined && errors.length > 0) {
+      console.error('Container status errors: ', errors)
+    }
     // Step 0. Get the details from the manifest
     const jsonFile: any = await jsonFileReader(this.manifestJsonFile);
     const expectedData = jsonFile['data'];
@@ -60,7 +63,6 @@ export class GetContainerItemValidatedByManifestCommand implements CommandInterf
     }
     const getItemCmd = new GetContainerItemValidatedCommand(this.electrumApi, this.container, this.requestDmitem, bitworkc, bitworkr, main, mainHash, proof, this.checkWithoutSealed);
     const getItemCmdResponse = await getItemCmd.run();
-    console.log('getItemCmdResponse', getItemCmdResponse)
     return {
       success: true,
       data: getItemCmdResponse
