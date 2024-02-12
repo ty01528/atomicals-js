@@ -4,6 +4,7 @@ import * as cloneDeep from 'lodash.clonedeep';
 import { BitworkInfo, buildAtomicalsFileMapFromRawTx, getTxIdFromAtomicalId, hexifyObjectWithUtf8, isValidBitworkString, isValidDmitemName } from "../utils/atomical-format-helpers";
 import { fileWriter, jsonFileReader, jsonFileWriter } from "../utils/file-utils";
 import * as fs from 'fs';
+import * as path from 'path'
 import * as mime from 'mime-types';
 import { FileMap } from "../interfaces/filemap.interface";
 import { basename, extname } from "path";
@@ -14,7 +15,26 @@ function isInvalidImageExtension(extName) {
   return extName !== '.jpg' && extName !== '.gif' && extName !== '.jpeg' && extName !== '.png' && extName !== '.svg' && extName !== '.webp' &&
     extName !== '.mp3' && extName !== '.mp4' && extName !== '.mov' && extName !== '.webm' && extName !== '.avi' && extName !== '.mpg'
 }
- 
+
+// Skip folders and invalid files under this folder
+function isInvalidFile(file, folder) {
+    const filePath = path.join(folder, file);
+    const stats = fs.statSync(filePath);
+
+    // Skip any folder
+    if (stats.isDirectory()) {
+        console.log(`Skipping ${file}...`);
+        return true;
+    }
+
+    // Skip any file whose name starts with .
+    if (file.startsWith('.')) {
+        console.log(`Skipping ${file}...`);
+        return true;
+    }
+
+    return false
+}
 
 export class CreateDmintItemManifestsCommand implements CommandInterface {
   constructor(
@@ -29,10 +49,10 @@ export class CreateDmintItemManifestsCommand implements CommandInterface {
     const filemap = {};
     const leafItems: any = [];
     for (const file of files) {
-      if (file.startsWith('.')) {
-        console.log(`Skipping ${file}...`);
+      if (isInvalidFile(file, this.folder)) {
         continue;
       }
+
       const basePath = basename(file);
       const extName = extname(file);
       const splitBase = basePath.split('.');
