@@ -9,7 +9,7 @@ bitcoin.initEccLib(ecc);
 import {
   initEccLib,
 } from "bitcoinjs-lib";
-import { getAndCheckAtomicalInfo, logBanner, prepareFilesDataAsObject } from "./command-helpers";
+import { getAndCheckAtomicalInfo, logBanner, prepareFilesDataAsObject, readJsonFileAsCompleteDataObjectEncodeAtomicalIds } from "./command-helpers";
 import { AtomicalOperationBuilder } from "../utils/atomical-operation-builder";
 import { BaseRequestOptions } from "../interfaces/api.interface";
 import { IWalletRecord } from "../utils/validate-wallet-storage";
@@ -22,7 +22,7 @@ export class DeleteInteractiveCommand implements CommandInterface {
     private electrumApi: ElectrumApiInterface,
     private options: BaseRequestOptions,
     private atomicalId: string,
-    private files: string[],
+    private filesWithDeleteKeys: string,
     private owner: IWalletRecord,
     private funding: IWalletRecord,
   ) {
@@ -47,7 +47,7 @@ export class DeleteInteractiveCommand implements CommandInterface {
       init: this.options.init,
     });
 
-    let filesData = await prepareFilesDataAsObject(this.files);
+    let filesData = await readJsonFileAsCompleteDataObjectEncodeAtomicalIds(this.filesWithDeleteKeys);
     await atomicalBuilder.setData({
       ...filesData,
       $a: 1,

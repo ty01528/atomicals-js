@@ -46,3 +46,38 @@ The minimum fields recommended are to use:
 The structure of the profile is designed in such a way that a partial update of the profile and links can be done with just the updated section.
 We opted for using a map instead of an array for the links for that reason since arrays must be completely replaced, whereas objects can have individual
 fields replaced.
+
+## Version History
+
+### 1.2
+
+Changes:
+
+- Added optional 'ids' section to be used to link to Realms or other resources to avoid spoofing
+
+Example of "ids" section of associating a realm `+myrealmname` and another subrealm `+messenger.cool`.
+Note that even though it's a subrealm, the type `realm` can be used
+
+```json
+// Note "t" stands for "type"
+// Note "v" stands for "value"
+ "ids": {
+      "0": {
+          "t": "realm",
+          "v": "myrealmname"
+      },
+      "1": {
+          "t": "realm",
+          "v": "messenger.cool"
+      }
+  }
+```
+### 1.1
+
+- Added optional 'collections' section for NFT creators to showcase the collections they created
+- Improve some link formatting
+
+### 1 (First version)
+
+- Establish base socialfi profile to be used with Realm +names
+- Supports "link tree" link profiles with avatar, bio, name, links, crypto addresses, etc

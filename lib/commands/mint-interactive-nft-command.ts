@@ -7,7 +7,7 @@ bitcoin.initEccLib(ecc);
 import {
   initEccLib,
 } from "bitcoinjs-lib";
-import { prepareFilesDataAsObject } from "./command-helpers";
+import { prepareFilesDataAsObject, readJsonFileAsCompleteDataObjectEncodeAtomicalIds } from "./command-helpers";
 import { AtomicalOperationBuilder } from "../utils/atomical-operation-builder";
 import { BaseRequestOptions } from "../interfaces/api.interface";
 import { checkBaseRequestOptions, isValidBitworkString } from "../utils/atomical-format-helpers";
@@ -18,7 +18,7 @@ export class MintInteractiveNftCommand implements CommandInterface {
   constructor(
     private electrumApi: ElectrumApiInterface,
     private options: BaseRequestOptions,
-    private files: string[],
+    private filename: string,
     private address: string,
     private fundingWIF: string,
   ) {
@@ -41,7 +41,7 @@ export class MintInteractiveNftCommand implements CommandInterface {
       init: this.options.init,
     });
     // Attach any default data
-    let filesData = await prepareFilesDataAsObject(this.files);
+    let filesData = await readJsonFileAsCompleteDataObjectEncodeAtomicalIds(this.filename);
     await atomicalBuilder.setData(filesData);
     // Attach a container request
     if (this.options.container)
