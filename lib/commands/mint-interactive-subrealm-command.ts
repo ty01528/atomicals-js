@@ -74,12 +74,14 @@ export class MintInteractiveSubrealmCommand implements CommandInterface {
         data: getSubrealmReponse.data
       }
     }
-    // Step 3. Check if the nearest parent is actually a parent realm that the current client already owns by fetching and comparing the address
-    // at the location
+    // Step 3. Check if the nearest parent is actually a parent realm that the current client already owns
+    // by fetching and comparing the address at the location.
     const nearestParentAtomicalId = getSubrealmReponse.data.nearest_parent_realm_atomical_id;
     const getNearestParentRealmCommand = new GetCommand(this.electrumApi, nearestParentAtomicalId, AtomicalsGetFetchType.LOCATION);
     const getNearestParentRealmResponse = await getNearestParentRealmCommand.run();
-    if (getNearestParentRealmResponse.success && getNearestParentRealmResponse.data.atomical_id) {
+
+    const hasValidParent = getNearestParentRealmResponse.success && getNearestParentRealmResponse.data?.result?.atomical_id == nearestParentAtomicalId;
+    if (!hasValidParent) {
       return {
         success: false,
         msg: 'Error retrieving nearest parent atomical ' + nearestParentAtomicalId,

@@ -18,7 +18,7 @@ const tinysecp: TinySecp256k1Interface = require('tiny-secp256k1');
 initEccLib(tinysecp as any);
 const ECPair: ECPairAPI = ECPairFactory(tinysecp);
 export class MintInteractiveSubrealmWithRulesCommand implements CommandInterface {
-  constructor( 
+  constructor(
     private electrumApi: ElectrumApiInterface,
     private requestSubrealm: string,
     private nearestParentAtomicalId: string,
@@ -56,7 +56,9 @@ export class MintInteractiveSubrealmWithRulesCommand implements CommandInterface
     }
     const getNearestParentRealmCommand = new GetCommand(this.electrumApi, this.nearestParentAtomicalId, AtomicalsGetFetchType.LOCATION);
     const getNearestParentRealmResponse = await getNearestParentRealmCommand.run();
-    if (getNearestParentRealmResponse.success && getNearestParentRealmResponse.data.atomical_id) {
+
+    const hasValidParent = getNearestParentRealmResponse.success && getNearestParentRealmResponse.data?.result?.atomical_id == this.nearestParentAtomicalId;
+    if (!hasValidParent) {
       return {
         success: false,
         msg: 'Error retrieving nearest parent atomical ' + this.nearestParentAtomicalId,
@@ -114,7 +116,7 @@ export class MintInteractiveSubrealmWithRulesCommand implements CommandInterface
           if (isNaN(priceRule)) {
             throw new Error('Price is not a valid number')
           }
-          
+
           if (priceRuleTokenType && !isAtomicalId(priceRuleTokenType)) {
             throw new Error('id parameter must be a compact atomical id: ' + priceRuleTokenType);
           }
