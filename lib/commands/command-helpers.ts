@@ -572,9 +572,12 @@ export const getAndCheckAtomicalInfo = async (electrumApi: ElectrumApiInterface,
 
     const getLocationCommand = new ResolveCommand(electrumApi, atomicalAliasOrId, AtomicalsGetFetchType.LOCATION);
     const getLocationResponse = await getLocationCommand.run();
+    if (getLocationResponse?.data?.status === 'pending') {
+        throw `Atomical is still waiting for confirmation.`
+    }
     if (!getLocationResponse.success) {
         console.log(JSON.stringify(getLocationResponse, null, 2));
-        throw new Error(`Error: Unable to get location.`)
+        throw `Error: Unable to get location.`
     }
     const atomicalInfo = getLocationResponse.data.result;
     if (expectedType === 'NFT' && atomicalInfo.type !== expectedType) {
@@ -611,4 +614,4 @@ export const getAndCheckAtomicalInfo = async (electrumApi: ElectrumApiInterface,
         locationInfo,
         inputUtxoPartial
     }
-}   
+}
