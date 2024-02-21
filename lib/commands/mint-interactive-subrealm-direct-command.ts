@@ -28,7 +28,7 @@ export interface ResolvedRealm {
  * Mints a subrealm with the assumption that the `owner` wallet owns the parent atomical
  */
 export class MintInteractiveSubrealmDirectCommand implements CommandInterface {
-  constructor( 
+  constructor(
     private electrumApi: ElectrumApiInterface,
     private requestSubrealm: string,
     private nearestParentAtomicalId: string,
@@ -71,7 +71,9 @@ export class MintInteractiveSubrealmDirectCommand implements CommandInterface {
     }
     const getNearestParentRealmCommand = new GetCommand( this.electrumApi, this.nearestParentAtomicalId, AtomicalsGetFetchType.LOCATION);
     const getNearestParentRealmResponse = await getNearestParentRealmCommand.run();
-    if (getNearestParentRealmResponse.success && getNearestParentRealmResponse.data.atomical_id) {
+
+    const hasValidParent = getNearestParentRealmResponse.success && getNearestParentRealmResponse.data?.result?.atomical_id == this.nearestParentAtomicalId;
+    if (!hasValidParent) {
       return {
         success: false,
         msg: 'Error retrieving nearest parent atomical ' + this.nearestParentAtomicalId,
@@ -86,7 +88,7 @@ export class MintInteractiveSubrealmDirectCommand implements CommandInterface {
     if (this.nearestParentAtomicalId !== getNearestParentRealmResponse.data.result.atomical_id) {
       throw new Error('Provided parent id does not match the current location of the parent realm')
     }
- 
+
     const atomicalBuilder = new AtomicalOperationBuilder({
       electrumApi: this.electrumApi,
       rbf: this.options.rbf,
@@ -104,7 +106,7 @@ export class MintInteractiveSubrealmDirectCommand implements CommandInterface {
 
     // For direct mints we must spent the parent realm atomical in the same transaction
     atomicalBuilder.addInputUtxo(utxoLocation, this.owner.WIF)
-    
+
     // The first output will be the location of the subrealm minted
     atomicalBuilder.addOutput({
       address: this.address,
@@ -116,7 +118,7 @@ export class MintInteractiveSubrealmDirectCommand implements CommandInterface {
       address: utxoLocation.address,
       value: utxoLocation.witnessUtxo.value
     });
- 
+
     // Set to request a container
     atomicalBuilder.setRequestSubrealm(this.requestSubrealm, this.nearestParentAtomicalId, REALM_CLAIM_TYPE.DIRECT);
     // Attach a container request
