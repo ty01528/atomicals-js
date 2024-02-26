@@ -57,6 +57,7 @@ export class InitInteractiveInfiniteDftCommand implements CommandInterface {
     private mintBitworkRevealIncrement: number | null,
     private mintBitworkCommitIncrementStart: number | null,
     private mintBitworkRevealIncrementStart: number | null,
+    private maxGlobalMints: number | null,
     private fundingWIF: string,
     private noimage?: boolean
   ) {
@@ -115,6 +116,7 @@ export class InitInteractiveInfiniteDftCommand implements CommandInterface {
     console.log('Mint Bitwork (commit) Increment Start: ', this.mintBitworkCommitIncrementStart);
     console.log('Mint Bitwork (reveal) Increment: ', this.mintBitworkRevealIncrement);
     console.log('Mint Bitwork (reveal) Increment Start: ', this.mintBitworkRevealIncrementStart);
+    console.log('Max mints in global:', this.maxGlobalMints)
     console.log('Mint Height: ', this.mintHeight);
     console.log('Mint Amount: ', this.mintAmount);
     console.log('Data objects: ', filesData);
@@ -195,6 +197,10 @@ export class InitInteractiveInfiniteDftCommand implements CommandInterface {
         args['brs'] = this.mintBitworkRevealIncrementStart
       }
     }
+    if (this.maxGlobalMints) {
+      args['maxg'] = this.maxGlobalMints;
+    }
+
  
     atomicalBuilder.setArgs(args);
     // Set to request a container
