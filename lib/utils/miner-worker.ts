@@ -178,11 +178,8 @@ if (parentPort) {
                 });
             }
 
-            psbtStart.signInput(0, fundingKeypair.tweakedChildNode);
-            psbtStart.finalizeAllInputs();
-
             // Extract the transaction and get its ID
-            prelimTx = psbtStart.extractTransaction();
+            prelimTx = psbtStart.extractTransaction(true);
             const checkTxid = prelimTx.getId();
 
             // Check if there is a valid proof of work
@@ -194,6 +191,10 @@ if (parentPort) {
                     workerBitworkInfoCommit?.ext as any
                 )
             ) {
+                psbtStart.signInput(0, fundingKeypair.tweakedChildNode);
+                psbtStart.finalizeAllInputs();
+                prelimTx = psbtStart.extractTransaction();
+
                 // Valid proof of work found, log success message
                 console.log(
                     chalk.green(prelimTx.getId(), ` sequence: (${sequence})`)
