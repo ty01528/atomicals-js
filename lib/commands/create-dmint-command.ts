@@ -1,12 +1,12 @@
 import { ElectrumApiInterface } from "../api/electrum-api.interface";
 import { CommandInterface } from "./command.interface";
 import * as cloneDeep from 'lodash.clonedeep';
-import { BitworkInfo, buildAtomicalsFileMapFromRawTx, getTxIdFromAtomicalId, hexifyObjectWithUtf8, isValidBitworkConst, isValidBitworkString } from "../utils/atomical-format-helpers";
+import { BitworkInfo, buildAtomicalsFileMapFromRawTx, getTxIdFromAtomicalId, hexifyObjectWithUtf8, isValidBitworkConst, isValidBitworkString, isValidDmitemName, isObject } from "../utils/atomical-format-helpers";
 import { fileWriter, jsonFileReader, jsonFileWriter } from "../utils/file-utils";
 import * as fs from 'fs';
 import * as mime from 'mime-types';
 import { FileMap } from "../interfaces/filemap.interface";
-import { basename, extname } from "path";
+import { basename, extname, join } from "path";
 import { hash256 } from 'bitcoinjs-lib/src/crypto';
 import { MerkleTree } from 'merkletreejs'
 const SHA256 = require('crypto-js/sha256')
@@ -18,6 +18,81 @@ function isInvalidImageExtension(extName) {
 function isJsonExtension(extName) {
   return extName === '.json';
 }
+
+function isInvalidFile(file: string, folder: string) {
+    const filePath = join(folder, file);
+    const stats = fs.statSync(filePath);
+
+    // Skip any folder
+    if (stats.isDirectory()) {
+        console.log(`Skipping ${file}...`);
+        return true;
+    }
+
+    // Skip any file whose name starts with '.' or 'dmint'
+    if (file.startsWith('.') || file.startsWith('dmint')) {
+        console.log(`Skipping ${file}...`);
+        return true;
+    }
+
+    // Skip any non-dmitem file
+    const basePath = basename(file);
+    const splitBase = basePath.split('.');
+    const rawName = splitBase[0];
+    if (!isValidDmitemName(rawName)) {
+        return true;
+    }
+
+    return false;
+}
+
+interface ProofItemKV {
+    p: boolean;
+    d: string;
+}
+
+interface ArgsKV {
+    request_dmitem: string;
+    main: string;
+    i: boolean;
+    proof?: [ProofItemKV];
+}
+
+interface DmitemKV {
+    mainHash: string;
+    data: ArgsKV;
+    targetVector?: string;
+    targethash?: string;
+}
+
+// Check Json key value pair validity
+// More checking can be done here
+function _checkDmitemKV(kv: any): kv is DmitemKV {
+    const hasBasicKeys = typeof kv.mainHash === 'string' && isObject(kv.data);
+    const hasValidData = isObject(kv.data.args) && typeof kv.data.args.request_dmitem === 'string' &&
+        typeof kv.data.args.main === 'string' && typeof kv.data.args.i === 'boolean';
+
+    return hasBasicKeys && hasValidData;
+}
+
+function _validateJson(data: any): boolean {
+    try {
+        if (_checkDmitemKV(data)) {
+            return true;
+        } else {
+            console.error("Invalid dmitem JSON data structure!");
+        }
+    } catch (err) {
+        console.error("Error parsing dmitem JSON:", err);
+    }
+
+    return false
+}
+
+function isValidJson(data: any) {
+    return _validateJson(data);
+}
+
 export class CreateDmintCommand implements CommandInterface {
   constructor(
     private folder: string,
@@ -37,12 +112,15 @@ export class CreateDmintCommand implements CommandInterface {
     const leafItems: any = [];
     const jsonFiles = {};
     for (const file of files) {
-      if (file.startsWith('.') || file.startsWith('dmint')) {
-        console.log(`Skipping ${file}...`);
+      if (isInvalidFile(file, this.folder)) {
         continue;
       }
       counter++;
       const jsonFile: any = await jsonFileReader(`${this.folder}/${file}`)
+      // Check data validity of Dmitems
+      if (!isValidJson(jsonFile)) {
+        throw new Error(`${file}: Invalid Dmitem Json.`)
+      }
       jsonFiles[jsonFile['data']['args']['request_dmitem']] = jsonFile;
       const itemName = jsonFile['data']['args']['request_dmitem'];
       const mainName = jsonFile['data']['args']['main'];
