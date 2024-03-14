@@ -1760,6 +1760,50 @@ program.command('mint-nft')
     }
   });
 
+
+program.command('mint-nft-json')
+.description('Mint non-fungible token (NFT) Atomical with JSON only data')
+.argument('<jsonFile>', 'string')
+.option('--rbf', 'Whether to enable RBF for transactions.')
+.option('--initialowner <string>', 'Initial owner wallet alias to mint the Atomical into')
+.option('--satsbyte <number>', 'Satoshis per byte in fees', '-1')
+.option('--satsoutput <number>', 'Satoshis to put into the minted atomical', '1000')
+.option('--funding <string>', 'Use wallet alias WIF key to be used for funding and change')
+.option('--container <string>', 'Name of the container to request')
+.option('--bitworkc <string>', 'Whether to put any bitwork proof of work into the token mint. Applies to the commit transaction.')
+.option('--bitworkr <string>', 'Whether to put any bitwork proof of work into the token mint. Applies to the reveal transaction.')
+.option('--parent <string>', 'Whether to require a parent atomical to be spent along with the mint.')
+.option('--parentowner <string>', 'Wallet owner of the parent to spend along with the mint.')
+.option('--disablechalk', 'Whether to disable the real-time chalked logging of each hash for mining. Improvements mining performance to set this flag')
+.action(async (file, options) => {
+  try {
+    const walletInfo = await validateWalletStorage();
+    const config: ConfigurationInterface = validateCliInputs();
+    const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
+    let initialOwnerAddress = resolveAddress(walletInfo, options.initialowner, walletInfo.primary).address;
+    let parentOwnerRecord = resolveWalletAliasNew(walletInfo, options.parentowner, walletInfo.primary);
+    let fundingRecord = resolveWalletAliasNew(walletInfo, options.funding, walletInfo.funding);
+    const result: any = await atomicals.mintNftInteractive({
+      rbf: options.rbf,
+      meta: options.meta,
+      ctx: options.ctx,
+      init: options.init,
+      satsbyte: parseInt(options.satsbyte),
+      satsoutput: parseInt(options.satsoutput),
+      container: options.container,
+      bitworkc: options.bitworkc,
+      bitworkr: options.bitworkr,
+      parent: options.parent,
+      parentOwner: parentOwnerRecord,
+      disableMiningChalk: options.disablechalk,
+    }, file, initialOwnerAddress, fundingRecord.WIF, true);
+    handleResultLogging(result);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+
 program.command('mint-realm')
   .description('Mint top level Realm non-fungible token (NFT) Atomical')
   .argument('<realm>', 'string')

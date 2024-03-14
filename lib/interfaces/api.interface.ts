@@ -27,7 +27,7 @@ export const BASE_REQUEST_OPTS_DEFAULTS = {
 
 export interface APIInterface {
     // Mint non-fungible-token methods (NFT)
-    mintNftInteractive(options: BaseRequestOptions, file: string, address: string, WIF: string): Promise<CommandResultInterface>;
+    mintNftInteractive(options: BaseRequestOptions, file: string, address: string, WIF: string, jsonOnly?: boolean): Promise<CommandResultInterface>;
     mintRealmInteractive(options: BaseRequestOptions, requestRealm: string, address: string, WIF: string): Promise<CommandResultInterface>;
     mintSubrealmInteractive(options: BaseRequestOptions, requestSubRealm: string, address: string, WIF: string, owner: IWalletRecord): Promise<CommandResultInterface>;
     mintContainerInteractive(options: BaseRequestOptions, requestContainer: string, address: string, WIF: string): Promise<CommandResultInterface>;

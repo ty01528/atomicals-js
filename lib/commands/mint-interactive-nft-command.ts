@@ -21,6 +21,7 @@ export class MintInteractiveNftCommand implements CommandInterface {
     private filename: string,
     private address: string,
     private fundingWIF: string,
+    private jsonOnly?: boolean
   ) {
     this.options = checkBaseRequestOptions(this.options);
   }
@@ -41,7 +42,12 @@ export class MintInteractiveNftCommand implements CommandInterface {
       init: this.options.init,
     });
     // Attach any default data
-    let filesData = await readJsonFileAsCompleteDataObjectEncodeAtomicalIds(this.filename);
+    let filesData: any = null;
+    if (this.jsonOnly) {
+      filesData = await readJsonFileAsCompleteDataObjectEncodeAtomicalIds(this.filename);
+    } else {
+      filesData = await prepareFilesDataAsObject([this.filename]);
+    }
     await atomicalBuilder.setData(filesData);
     // Attach a container request
     if (this.options.container)

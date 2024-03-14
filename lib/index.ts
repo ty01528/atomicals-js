@@ -304,10 +304,10 @@ export class Atomicals implements APIInterface {
     }
   }
 
-  async mintNftInteractive(options: BaseRequestOptions, file: string, address: string, WIF: string): Promise<CommandResultInterface> {
+  async mintNftInteractive(options: BaseRequestOptions, file: string, address: string, WIF: string, jsonOnly?: boolean): Promise<CommandResultInterface> {
     try {
       await this.electrumApi.open();
-      const command: CommandInterface = new MintInteractiveNftCommand(this.electrumApi, options, file, address, WIF);
+      const command: CommandInterface = new MintInteractiveNftCommand(this.electrumApi, options, file, address, WIF, jsonOnly);
       return await command.run();
     } catch (error: any) {
       return {
