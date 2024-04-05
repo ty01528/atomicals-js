@@ -30,7 +30,6 @@ function printSuccess(data: any, showDonation?: boolean) {
     return;
   }
   console.log(chalk.blue("\n\n------------------------------------------------------------------------------"));
-
   let q = 'Recommend to your children virtue; that alone can make them happy, not gold.';
   let by = 'Ludwig van Beethoven';
   try {
@@ -43,7 +42,7 @@ function printSuccess(data: any, showDonation?: boolean) {
   console.log(chalk.green(q));
   console.log(chalk.green('- ' + by));
   console.log(chalk.blue("------------------------------------------------------------------------------\n"))
-  const donate = 'bc1pl6k2z5ra403zfeyevzsu7llh0mdqqn4802p4uqfhz6l7qzddq2mqduqvc6';
+  const donate = 'bc1p3f2t2dal9wpvw4u7wtjxsyf36hfsxf4kyfn55d6jqfyc4yd56ppqgsze2e';
   console.log('Thank you for your support and contributions to Atomicals CLI development! ❤️');
   console.log(`Donation address: ${donate}\n`);
   console.log(`Even a little goes a long way!\n`);
