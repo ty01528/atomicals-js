@@ -288,6 +288,7 @@ export const workerPrepareCommitRevealConfig = (
         | "sl"
         | "x"
         | "y"
+        | "z"
         | "mod"
         | "evt"
         | "dat",
@@ -339,6 +340,7 @@ export const appendMintUpdateRevealScript = (
         | "sl"
         | "x"
         | "y"
+        | "z"
         | "mod"
         | "evt"
         | "dat",

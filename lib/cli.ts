@@ -1258,6 +1258,30 @@ program.command('split')
   });
 */
 
+program.command('custom-color')
+  .description('custom color operation to separate the FT Atomicals at a single UTXOs.')
+  .argument('<locationId>', 'string')
+  .option('--rbf', 'Whether to enable RBF for transactions.')
+  .option('--funding <string>', 'Use wallet alias wif key to be used for funding')
+  .option('--owner <string>', 'Use wallet alias WIF key to move the Atomical')
+  .option('--satsbyte <number>', 'Satoshis per byte in fees', '15')
+  .action(async (locationId, options) => {
+    try {
+      const walletInfo = await validateWalletStorage();
+      const config: ConfigurationInterface = validateCliInputs();
+      const atomicals = new Atomicals(ElectrumApi.createClient(process.env.ELECTRUMX_PROXY_BASE_URL || ''));
+      let fundingWalletRecord = resolveWalletAliasNew(walletInfo, options.funding, walletInfo.funding);
+      let ownerWalletRecord = resolveWalletAliasNew(walletInfo, options.owner, walletInfo.primary);
+      const result: any = await atomicals.customColorItneractive({
+        rbf: options.rbf,
+        satsbyte: parseInt(options.satsbyte),
+      }, locationId, fundingWalletRecord, ownerWalletRecord);
+      handleResultLogging(result);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
 program.command('get')
   .description('Get the status of an Atomical')
   .argument('<atomicalAliasOrId>', 'string')

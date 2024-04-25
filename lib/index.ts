@@ -79,6 +79,7 @@ import { DecodeTxCommand } from "./commands/decode-tx-command";
 import { AwaitUtxoCommand } from "./commands/await-utxo-command";
 import { InitInteractiveInfiniteDftCommand } from "./commands/init-interactive-infinite-dft-command";
 import { InitInteractiveFixedDftCommand } from "./commands/init-interactive-fixed-dft-command";
+import { customColorInteractiveCommand } from "./commands/custom-color-interactive-command";
 export { decorateAtomicals } from "./utils/atomical-format-helpers";
 export { addressToP2PKH } from "./utils/address-helpers";
 export { getExtendTaprootAddressKeypairPath } from "./utils/address-keypair-path";
@@ -617,6 +618,23 @@ export class Atomicals implements APIInterface {
       this.electrumApi.close();
     }
   }
+
+  async customColorItneractive(options: BaseRequestOptions, atomicalId: string, funding: IWalletRecord, atomicalOwner: IWalletRecord): Promise<CommandResultInterface> {
+    try {
+      await this.electrumApi.open();
+      const command: CommandInterface = new customColorInteractiveCommand(this.electrumApi, options, atomicalId, atomicalOwner, funding);
+      return await command.run();
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error.toString(),
+        error
+      }
+    } finally {
+      this.electrumApi.close();
+    }
+  }
+  
   async emitInteractive(options: BaseRequestOptions, atomicalId: string, files: string[], funding: IWalletRecord, atomicalOwner: IWalletRecord): Promise<CommandResultInterface> {
     try {
       await this.electrumApi.open();
