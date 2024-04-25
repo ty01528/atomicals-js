@@ -76,7 +76,7 @@ export const calculateUtxoFundsRequired = (numberOfInputs, numberOfOutputs, sats
 
 
 
-export const appendMintUpdateRevealScript2 = (opType: 'nft' | 'ft' | 'dft' | 'dmt' | 'sl' | 'x' | 'y' | 'mod' | 'evt', keypair: KeyPairInfo, files: AtomicalFileData[], log: boolean = true) => {
+export const appendMintUpdateRevealScript2 = (opType: 'nft' | 'ft' | 'dft' | 'dmt' | 'sl' | 'x' | 'y' | 'z' | 'mod' | 'evt', keypair: KeyPairInfo, files: AtomicalFileData[], log: boolean = true) => {
     let ops = `${keypair.childNodeXOnlyPubkey.toString('hex')} OP_CHECKSIG OP_0 OP_IF `;
     ops += `${Buffer.from(ATOMICALS_PROTOCOL_ENVELOPE_ID, 'utf8').toString('hex')}`;
     ops += ` ${Buffer.from(opType, 'utf8').toString('hex')}`;
@@ -115,7 +115,7 @@ export const appendMintUpdateRevealScript2 = (opType: 'nft' | 'ft' | 'dft' | 'dm
     return ops;
 };
 
-export const prepareCommitRevealConfig2 = (opType: 'nft' | 'ft' | 'dft' | 'dmt' | 'sl' | 'x' | 'y' | 'mod' | 'evt', keypair: KeyPairInfo, filesData: AtomicalFileData[], log = true) => {
+export const prepareCommitRevealConfig2 = (opType: 'nft' | 'ft' | 'dft' | 'dmt' | 'sl' | 'x' | 'y' | 'z' | 'mod' | 'evt', keypair: KeyPairInfo, filesData: AtomicalFileData[], log = true) => {
     const revealScript = appendMintUpdateRevealScript2(opType, keypair, filesData, log);
     const hashscript = script.fromASM(revealScript);
     const scriptTree = {
@@ -144,7 +144,7 @@ export const prepareCommitRevealConfig2 = (opType: 'nft' | 'ft' | 'dft' | 'dmt' 
     }
 }
 
-export const prepareCommitRevealConfig = (opType: 'nft' | 'ft' | 'dft' | 'dmt' | 'sl' | 'x' | 'y' | 'mod' | 'evt' | 'dat', keypair: KeyPairInfo, atomicalsPayload: AtomicalsPayload, log = true) => {
+export const prepareCommitRevealConfig = (opType: 'nft' | 'ft' | 'dft' | 'dmt' | 'sl' | 'x' | 'y' | 'z' | 'mod' | 'evt' | 'dat', keypair: KeyPairInfo, atomicalsPayload: AtomicalsPayload, log = true) => {
     const revealScript = appendMintUpdateRevealScript(opType, keypair, atomicalsPayload, log);
     const hashscript = script.fromASM(revealScript);
     const scriptTree = {
@@ -524,7 +524,7 @@ export class AtomicalsPayload {
     }
 }
 
-export const appendMintUpdateRevealScript = (opType: 'nft' | 'ft' | 'dft' | 'dmt' | 'sl' | 'x' | 'y' | 'mod' | 'evt' | 'dat', keypair: KeyPairInfo, payload: AtomicalsPayload, log: boolean = true) => {
+export const appendMintUpdateRevealScript = (opType: 'nft' | 'ft' | 'dft' | 'dmt' | 'sl' | 'x' | 'y' | 'z' | 'mod' | 'evt' | 'dat', keypair: KeyPairInfo, payload: AtomicalsPayload, log: boolean = true) => {
     let ops = `${keypair.childNodeXOnlyPubkey.toString('hex')} OP_CHECKSIG OP_0 OP_IF `;
     ops += `${Buffer.from(ATOMICALS_PROTOCOL_ENVELOPE_ID, 'utf8').toString('hex')}`;
     ops += ` ${Buffer.from(opType, 'utf8').toString('hex')}`;

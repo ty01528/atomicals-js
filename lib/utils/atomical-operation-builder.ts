@@ -186,7 +186,8 @@ export interface AtomicalOperationBuilderOptions {
         | "evt"
         | "sl"
         | "x"
-        | "y";
+        | "y"
+        | "z";
     requestContainerMembership?: string;
     bitworkc?: string;
     bitworkr?: string;
