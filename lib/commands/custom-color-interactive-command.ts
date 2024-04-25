@@ -70,6 +70,9 @@ export class customColorInteractiveCommand implements CommandInterface {
       if (!isAtomicalId(atomical.atomical_id)) {
         throw new Error('Critical error atomical_id is not valid for FT');
       }
+
+      console.log('-')
+      console.log(`current atomical_id: ${atomical.atomical_id}`)
       
       const outputs: {} = await this.promptCustomColored(index, atomical.value);
 
